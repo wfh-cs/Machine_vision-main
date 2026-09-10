@@ -1,0 +1,19 @@
+name: Python checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile application modules
+        run: >-
+          python -m py_compile gp_main.py gp_config.py gp_mainwindow.py
+          gp_cameradisplaywidget.py gp_detectiondisplaywidget.py
+          gp_detectionworker.py gp_globals.py gp_serial.py

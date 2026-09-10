@@ -1,0 +1,14 @@
+# Python 3.10+ is recommended. PyTorch builds are platform and accelerator specific.
+numpy>=1.23
+opencv-python>=4.8
+pillow>=9.0
+psutil>=5.9
+PyQt5>=5.15
+pyserial>=3.5
+PyYAML>=6.0
+requests>=2.31
+scipy>=1.10
+torch>=2.1
+torchvision>=0.16
+tqdm>=4.65
+ultralytics-thop>=2.0
