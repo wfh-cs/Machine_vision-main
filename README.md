@@ -1,18 +1,18 @@
-# GearPro Machine Vision
+# GearPro 机器视觉
 
-GearPro is a PyQt5 desktop application for real-time industrial part inspection. It combines an OpenCV camera stream, local Ultralytics YOLO inference, and optional serial commands for downstream equipment.
+GearPro 是一个基于 PyQt5 的桌面应用，用于工业零件的实时检测。它集成了 OpenCV 摄像头视频流、本地 Ultralytics YOLO 推理，以及面向下游设备的可选串口指令。
 
-## Production-focused improvements
+## 面向生产环境的改进
 
-- Runtime configuration uses `GP_*` environment variables; original camera, serial, model, confidence, and cooldown defaults are unchanged.
-- Camera initialization supports Linux V4L2 and allows OpenCV to select a native backend on Windows and macOS.
-- Detection pacing is configurable and stop requests interrupt the worker promptly.
-- Serial resources are released during shutdown.
-- A package entry point, dependency list, and GitHub Actions compile check make installation and review repeatable.
+- 运行时配置改用 `GP_*` 环境变量；摄像头、串口、模型、置信度和冷却时间等原有默认值保持不变。
+- 摄像头初始化支持 Linux V4L2，并允许 OpenCV 在 Windows 和 macOS 上自动选择原生后端。
+- 检测节拍可配置，停止请求能够及时中断工作线程。
+- 程序退出时会释放串口资源。
+- 提供包入口、依赖清单和 GitHub Actions 编译检查，使安装与评审可重复执行。
 
-## Quick start
+## 快速开始
 
-Use Python 3.10 or newer. Install a PyTorch build suitable for the target CPU/GPU first, then install the rest of the dependencies:
+请使用 Python 3.10 或更高版本。先安装与目标 CPU/GPU 匹配的 PyTorch 构建，再安装其余依赖：
 
 ```powershell
 python -m venv .venv
@@ -23,23 +23,23 @@ python -m pip install -e .
 gearpro
 ```
 
-The project contains its pinned `ultralytics` source tree, so launch commands must be run from the repository root (or use the editable install above).
+本项目包含已锁定版本的 `ultralytics` 源码树，因此启动命令必须在仓库根目录下执行（或使用上面的可编辑安装方式）。
 
-## Configuration
+## 配置
 
-All configuration is optional. These values preserve the previous runtime behavior:
+所有配置项均为可选。以下取值保持原有运行时行为：
 
-| Variable | Default | Purpose |
+| 变量 | 默认值 | 用途 |
 | --- | --- | --- |
-| `GP_MODEL_PATH` | `best.pt` | Local YOLO model path |
-| `GP_CAMERA_INDEX` | `2` | OpenCV camera index |
-| `GP_CONFIDENCE` | `0.7` | YOLO confidence threshold |
-| `GP_DETECTION_INTERVAL` | `0.1` | Seconds between inference cycles |
-| `GP_SERIAL_PORT` | `/dev/ttyHS1` | Serial actuator port |
-| `GP_SERIAL_BAUDRATE` | `9600` | Serial baud rate |
-| `GP_RESULT_COOLDOWN_MS` | `5000` | Delay before another actuator command |
+| `GP_MODEL_PATH` | `best.pt` | 本地 YOLO 模型路径 |
+| `GP_CAMERA_INDEX` | `2` | OpenCV 摄像头索引 |
+| `GP_CONFIDENCE` | `0.7` | YOLO 置信度阈值 |
+| `GP_DETECTION_INTERVAL` | `0.1` | 相邻两次推理之间的间隔秒数 |
+| `GP_SERIAL_PORT` | `/dev/ttyHS1` | 串口执行机构端口 |
+| `GP_SERIAL_BAUDRATE` | `9600` | 串口波特率 |
+| `GP_RESULT_COOLDOWN_MS` | `5000` | 下发下一条执行指令前的延迟 |
 
-Example for a Windows test station:
+Windows 测试工位示例：
 
 ```powershell
 $env:GP_CAMERA_INDEX = "0"
@@ -48,24 +48,24 @@ $env:GP_MODEL_PATH = "C:\models\best.pt"
 gearpro
 ```
 
-## Hardware behavior
+## 硬件行为
 
-The application sends `01` when it detects the `good` class and `02` for `miss`. Commands are throttled by `GP_RESULT_COOLDOWN_MS`. Validate camera framing, class semantics, serial wiring, and actuator safety in a supervised test before connecting production equipment.
+检测到 `good` 类时，应用发送 `01`；检测到 `miss` 时，应用发送 `02`。指令发送受 `GP_RESULT_COOLDOWN_MS` 限流。在接入生产设备之前，请在有人监护的测试环境中验证摄像头取景、类别语义、串口接线以及执行机构的安全性。
 
-## Repository layout
+## 仓库结构
 
-| Path | Responsibility |
+| 路径 | 职责 |
 | --- | --- |
-| `gp_main.py` | Application entry point |
-| `gp_config.py` | Environment-backed runtime configuration |
-| `gp_cameradisplaywidget.py` | Camera capture and raw-frame display |
-| `gp_detectionworker.py` | YOLO inference worker |
-| `gp_detectiondisplaywidget.py` | Detection UI and serial trigger logic |
-| `gp_serial.py` | Serial transport |
-| `.github/workflows/python-checks.yml` | GitHub compile check |
+| `gp_main.py` | 应用入口 |
+| `gp_config.py` | 基于环境变量的运行时配置 |
+| `gp_cameradisplaywidget.py` | 摄像头采集与原始帧显示 |
+| `gp_detectionworker.py` | YOLO 推理工作线程 |
+| `gp_detectiondisplaywidget.py` | 检测界面与串口触发逻辑 |
+| `gp_serial.py` | 串口传输 |
+| `.github/workflows/python-checks.yml` | GitHub 编译检查 |
 
-## Licensing and publishing
+## 许可与发布
 
-This repository includes a vendored Ultralytics source tree marked AGPL-3.0 by its upstream project. The project-level `LICENSE.md` applies only to original GearPro files and does not replace third-party notices. Review the model-weight ownership, all third-party licenses, and the obligations of the AGPL before making a public release or distributing an executable.
+本仓库包含一份内嵌的 Ultralytics 源码树，其上游项目以 AGPL-3.0 授权。项目级的 `LICENSE.md` 仅适用于 GearPro 自有文件，不替代第三方声明。在公开发布或分发可执行文件之前，请核实模型权重的归属、所有第三方许可证，以及 AGPL 所要求的义务。
 
-See [NOTICE.md](NOTICE.md) for the release checklist.
+发布检查清单见 [NOTICE.md](NOTICE.md)。
